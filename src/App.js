@@ -2,29 +2,68 @@ import './styles/reset.css'
 import './styles/index.css'
 
 import initialStoreItems from './store-items'
+import { useState } from 'react'
 
-/*
-Here's what a store item should look like
-{
-  id: '001-beetroot',
-  name: 'beetroot',
-  price: 0.35
+const storeItemList = document.querySelector('.store--item-list')
+const cartItemList = document.querySelector('.cart--item-list')
+const totalNumber = document.querySelector('.total-number')
+
+let alreadyInCart = false
+
+const clearStorePage = () => {
+  storeItemList.innerHTML = ""
 }
 
-What should a cart item look like? 🤔
-*/
+const clearCart = () => {
+  cartItemList.innerHTML = ""
+}
 
-console.log(initialStoreItems)
+
+
 
 export default function App() {
-  // Setup state here...
+const [storeItems, setStoreItems] = useState(initialStoreItems)
+const [cartItems, setCartItems] = useState([])
+
+const checkIfItemIsInCart = (item) => {
+  for (let i = 0; i < cartItems.length; i++) {
+    if (cartItems[i].name === item.name) {
+      alreadyInCart = true
+      cartItems[i].quantity += 1
+      break
+    } else {alreadyInCart = false}
+  }
+}
+
+const addItemToCart = (product) => {
+  checkIfItemIsInCart(product)
+  if (!alreadyInCart) {
+    product.quantity = 1
+    const newCart = [...cartItems]
+    newCart.push(product)
+    setCartItems(newCart)
+  }
+}
 
   return (
     <>
       <header id="store">
         <h1>Greengrocers</h1>
         <ul className="item-list store--item-list">
-          {/* Wrtite some code here... */}
+          {storeItems.map((currentItem) => {
+            return(
+              <li key={currentItem.id}>
+                <div className='store--item-icon'>
+                  <img src={`assets/icons/${currentItem.id}.svg`} alt={currentItem.name} />
+                </div>
+                <button onClick={()=>{
+                  addItemToCart(currentItem)
+                  console.log(currentItem)
+                  // sumOfCart()
+                }}>Add to cart</button>
+              </li>
+            )
+          })}
         </ul>
       </header>
       <main id="cart">
