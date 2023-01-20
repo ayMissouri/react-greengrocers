@@ -38,9 +38,15 @@ const checkIfItemIsInCart = (item) => {
 const addItemToCart = (product) => {
   checkIfItemIsInCart(product)
   if (!alreadyInCart) {
-    product.quantity = 1
     const newCart = [...cartItems]
-    newCart.push(product)
+    const newProduct = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      img: `assets/icons/${product.id}.svg`,
+      quantity: 1
+    }
+    newCart.push(newProduct)
     setCartItems(newCart)
   }
 }
@@ -58,7 +64,6 @@ const addItemToCart = (product) => {
                 </div>
                 <button onClick={()=>{
                   addItemToCart(currentItem)
-                  console.log(currentItem)
                   // sumOfCart()
                 }}>Add to cart</button>
               </li>
@@ -70,7 +75,34 @@ const addItemToCart = (product) => {
         <h2>Your Cart</h2>
         <div className="cart--item-list-container">
           <ul className="item-list cart--item-list">
-            {/* Wrtite some code here... */}
+            {cartItems.map((cartItem) => {
+              return(
+                <li key={cartItem.id}>
+                  <img className='cart--item-icon' src={cartItem.img} alt={cartItem.name} />
+                  <p>{cartItem.name}</p>
+                  <button onClick={() => {
+                    let indexOfTheItemToRemove = cartItems.indexOf(cartItem)
+                    if (cartItem.quantity === 1) {
+                      const newCart = [...cartItems]
+                      newCart.splice(indexOfTheItemToRemove, 1)
+                      setCartItems(newCart)
+                      // sumOfCart()
+                    } else {
+                      cartItem.quantity--
+                      const newCart = [...cartItems]
+                      setCartItems(newCart)
+                      // sumOfCart()
+                    }
+                  }} className='quantity-btn remove-btn center'>-</button>
+                  <span className='quantity-text center'>{cartItem.quantity}</span>
+                  <button onClick={()=>{
+                    cartItem.quantity++
+                    const newCart = [...cartItems]
+                    setCartItems(newCart)
+                  }} className='quantity-btn add-btn center'>+</button>
+                </li>
+              )
+            })}
           </ul>
         </div>
         <div className="total-section">
